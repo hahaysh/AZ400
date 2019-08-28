@@ -1,0 +1,20 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
+WORKDIR /src
+COPY ["hahayshakswebapp/hahayshakswebapp.csproj", "hahayshakswebapp/"]
+RUN dotnet restore "hahayshakswebapp/hahayshakswebapp.csproj"
+COPY . .
+WORKDIR "/src/hahayshakswebapp"
+RUN dotnet build "hahayshakswebapp.csproj" -c Release -o /app
+
+FROM build AS publish
+RUN dotnet publish "hahayshakswebapp.csproj" -c Release -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "hahayshakswebapp.dll"]
