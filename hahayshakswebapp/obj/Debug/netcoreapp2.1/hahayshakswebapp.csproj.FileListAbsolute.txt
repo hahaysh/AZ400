@@ -1,0 +1,3 @@
+D:\AzureDevOps\AZ400\hahayshakswebapp\obj\Debug\netcoreapp2.1\hahayshakswebapp.csproj.CoreCompileInputs.cache
+D:\AzureDevOps\AZ400\hahayshakswebapp\obj\Debug\netcoreapp2.1\hahayshakswebapp.AssemblyInfoInputs.cache
+D:\AzureDevOps\AZ400\hahayshakswebapp\obj\Debug\netcoreapp2.1\hahayshakswebapp.AssemblyInfo.cs
