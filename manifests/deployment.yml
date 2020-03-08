@@ -1,0 +1,16 @@
+apiVersion : apps/v1beta1
+kind: Deployment
+metadata:
+  name: "hahaysh5aks"
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: "hahaysh5aks"
+    spec:
+      containers:
+        - name: "hahaysh5aks"
+          image: "hahaysh5acr.azurecr.io/hahaysh5aks"
+          ports:
+          - containerPort: 80
