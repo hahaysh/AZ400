@@ -1,0 +1,51 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: hahaysh5acr.azurecr.io
+        username: ${{ secrets.acr_hahaysh5acr_username }}
+        password: ${{ secrets.acr_hahaysh5acr_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/hahayshakswebapp" -f  "hahayshakswebapp/Dockerfile" -t hahaysh5acr.azurecr.io/hahaysh5aks:${{ github.sha }}
+        docker push hahaysh5acr.azurecr.io/hahaysh5aks:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_hahaysh5aks_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep hahaysh5akscd7c | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace hahaysh5akscd7c`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: hahaysh5akscd7c
+        container-registry-url: hahaysh5acr.azurecr.io
+        container-registry-username: ${{ secrets.acr_hahaysh5acr_username }}
+        container-registry-password: ${{ secrets.acr_hahaysh5acr_password }}
+        secret-name: hahaysh5aksdockerauth
+       
+    - uses: azure/k8s-deploy@v1
+      with:
+        namespace: hahaysh5akscd7c
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+          manifests/ingress.yml
+        images: |
+          hahaysh5acr.azurecr.io/hahaysh5aks:${{ github.sha }}
+        imagepullsecrets: |
+          hahaysh5aksdockerauth
