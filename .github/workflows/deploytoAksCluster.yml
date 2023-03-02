@@ -1,0 +1,51 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: hahaysh98acr.azurecr.io
+        username: ${{ secrets.acr_hahaysh98acr_username }}
+        password: ${{ secrets.acr_hahaysh98acr_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/broodwar" -f  "broodwar/Dockerfile" -t hahaysh98acr.azurecr.io/hahaysh98aks:${{ github.sha }} --label dockerfile-path=broodwar/Dockerfile
+        docker push hahaysh98acr.azurecr.io/hahaysh98aks:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_hahaysh98aks_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep hahaysh98aks90fa | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace hahaysh98aks90fa`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: hahaysh98aks90fa
+        container-registry-url: hahaysh98acr.azurecr.io
+        container-registry-username: ${{ secrets.acr_hahaysh98acr_username }}
+        container-registry-password: ${{ secrets.acr_hahaysh98acr_password }}
+        secret-name: hahaysh98aksdockerauth
+       
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: hahaysh98aks90fa
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+          manifests/ingress.yml
+        images: |
+          hahaysh98acr.azurecr.io/hahaysh98aks:${{ github.sha }}
+        imagepullsecrets: |
+          hahaysh98aksdockerauth
