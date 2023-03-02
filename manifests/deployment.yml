@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "hahaysh98aks-8fb1"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "hahaysh98aks-8fb1"
+  template:
+    metadata:
+      labels:
+        app: "hahaysh98aks-8fb1"
+    spec:
+      containers:
+        - name: "hahaysh98aks-8fb1"
+          image: "hahaysh98acr.azurecr.io/hahaysh98aks"
+          ports:
+          - containerPort: 80
