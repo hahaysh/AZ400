@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "8t9ZyM2Qin7tscUVVM8iJZajA++tAMlTmAZJvl9Te/TxHazjN5mnlN9Z+jPgocznnHelTdBPYW5RtMFLg4dCCQ==",
+  "success": true,
+  "projectFilePath": "C:\\AzureDemo\\AZ400\\starcraftweb\\starcraftweb.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\hahay\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.19.5\\microsoft.visualstudio.azure.containers.tools.targets.1.19.5.nupkg.sha512"
+  ],
+  "logs": []
+}
